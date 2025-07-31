@@ -4,11 +4,11 @@ import socketManager from '../socketManager.js'
 import io from "socket.io-client"
 
 class Message {
-  constructor(user, text, dateTime, labels){
+  constructor(user, text, dateTime, isLabeled){
     this.user = user;
     this.text = text;
     this.dateTime = dateTime;
-    this.labels = labels;
+    this.isLabeled = isLabeled;
   }
 }
 const label_1 = "重要"
@@ -38,8 +38,7 @@ onMounted(() => {
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
   //console.log("a")
-  const nowTime = new Date();
-  const newMessage = new Message(userName.value, chatContent.value, nowTime, labels)
+  const newMessage = new Message(userName.value, chatContent.value, new Date(), [true, true])
   console.log(newMessage)
   socket.emit("publishEvent", newMessage);
   // 入力欄を初期化
