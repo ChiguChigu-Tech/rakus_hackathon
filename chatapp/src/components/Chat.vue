@@ -1,7 +1,8 @@
 <script setup>
-import { inject, ref, reactive, onMounted, vModelCheckbox } from "vue"
+import { inject, ref, reactive, onMounted, vModelCheckbox, computed } from "vue"
 import socketManager from '../socketManager.js'
 import io from "socket.io-client"
+import { GoogleGenAI } from "@google/genai";
 
 class Message {
   constructor(user, text, dateTime, isLabeled){
@@ -17,6 +18,9 @@ const label_2 = "交通手段"
 const label_3 = "観光場所"
 const labels = [label_1, label_2, label_3]
 
+const ai = new GoogleGenAI({
+  apiKey: "API_KEY_HERE"
+});
 
 // #region global state
 const userName = inject("userName")
@@ -33,7 +37,29 @@ const participantsList = ref([])
 const chatList = reactive([])
 const isLabeled = reactive([false, false])
 // isLabeled.value = [false, false]
+const geminiResponse = ref("")
+const isGeminiLoading = ref(false)
 // #endregion
+
+// マークダウンをHTMLに変換する関数
+const parseMarkdown = (text) => {
+  return text
+    .replace(/### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+    .replace(/^\* (.*$)/gim, '<li>$1</li>')
+    .replace(/^\- (.*$)/gim, '<li>$1</li>')
+    .replace(/(\n<li>.*<\/li>)+/gim, '<ul>$&</ul>')
+    .replace(/\n/gim, '<br>')
+}
+
+// マークダウンを適用したGemini応答
+const formattedGeminiResponse = computed(() => {
+  if (!geminiResponse.value) return ''
+  return parseMarkdown(geminiResponse.value)
+})
 
 // #region lifecycle
 onMounted(() => {
@@ -151,12 +177,51 @@ const onKeydownPublish = (e) =>{
   }
 }
 
+async function requestGemini() {
+  isGeminiLoading.value = true;
+  try {
+    // チャット履歴を文字列として結合
+    const chatHistory = chatList.join('\n');
+    
+    const prompt = `以下のチャット履歴を要約して、重要なポイントをまとめてください(新しいチャットが上にあり、古いチャットが下になっています。)：
+
+${chatHistory}
+
+重要な情報、決定事項、注目すべき点を整理して、簡潔にまとめてください。特に、「決まっていること」「やらなければいけないこと」「相談事項」をまとめてください。`;
+    console.log("DEBUG(prompt): " + prompt)
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+    console.log(response.text);
+    geminiResponse.value = response.text;
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    geminiResponse.value = "エラーが発生しました。もう一度お試しください。";
+  } finally {
+    isGeminiLoading.value = false;
+  }
+}
+
 </script>
 
 <template>
   <div class="mx-auto my-5 px-4">
     <h1 class="text-h3 font-weight-medium">Vue.js Chat チャットルーム</h1>
     <div class="mt-10">
+      <button class="button-normal" @click="requestGemini" :disabled="isGeminiLoading">
+        <span v-if="!isGeminiLoading">Geminiで要約</span>
+        <span v-else>
+          <div class="loading-spinner"></div>
+          生成中...
+        </span>
+      </button>
+      <div class="mt-5" v-if="geminiResponse">
+        <h3>Gemini要約結果:</h3>
+        <div class="gemini-response" v-html="formattedGeminiResponse"></div>
+      </div>
+      
       <p>ログインユーザ：{{ userName }}さん</p>
 
       <p>参加者: {{ participants }}</p>
@@ -407,5 +472,69 @@ const onKeydownPublish = (e) =>{
   text-align: center;
 }
 
+.gemini-response {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.gemini-response h1, .gemini-response h2, .gemini-response h3 {
+  margin: 10px 0 5px 0;
+  color: #333;
+}
+
+.gemini-response h1 {
+  font-size: 18px;
+}
+
+.gemini-response h2 {
+  font-size: 16px;
+}
+
+.gemini-response h3 {
+  font-size: 14px;
+}
+
+.gemini-response ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.gemini-response li {
+  margin: 5px 0;
+}
+
+.gemini-response strong {
+  font-weight: bold;
+}
+
+.gemini-response em {
+  font-style: italic;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 </style>
 
