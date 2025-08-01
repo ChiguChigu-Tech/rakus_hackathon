@@ -84,11 +84,11 @@ export default (io, socket) => {
   })
 
   socket.on("requestGemini", async (data) => {
-    const chatHistory = messages.map(message => 
+    const chatHistory = messages.slice().reverse().map(message => 
       `${message.user}: ${message.text}`
     ).join('\n');
 
-    const prompt = `以下のチャット履歴を要約して、重要なポイントをまとめてください(新しいチャットが上にあり、古いチャットが下になっています。)：
+    const prompt = `以下のチャット履歴を要約して、重要なポイントをまとめてください(古いチャットが上にあり、新しいチャットが下になっています。)：
 
 チャット履歴(何も無い可能性があります。)):
 
