@@ -8,8 +8,28 @@ const ai = new GoogleGenAI({
 });
 
 const clients = new Map()
-let messages = []
-let id = 1
+// let messages = []
+let messages = [
+  {id: 18, user: "イトウ", text: "飛行機取ったよ！往復で1人77000円です！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 17, user: "イトウ", text: "僕やっとくね！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 16, user: "サトウ", text: "そういえば飛行機の予約誰か頼めるかな", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 15, user: "サトウ", text: "予約取れた！1人88000円です！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 14, user: "イトウ", text: "賛成〜！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 13, user: "タナカ", text: "賛成〜！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 12, user: "サトウ", text: "みんないいならここにしよう！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 11, user: "サトウ", text: "ラクラクホテル良さそうだね！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 10, user: "イトウ", text: "あ！そこ良さそう！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 9, user: "タナカ", text: "ここもいいんじゃないかな？『ラクラクホテル』", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 8, user: "イトウ", text: "こんなところもみつけたよ。『ムズムズホテル』『ホテルワズラワシーサイド』", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 7, user: "サトウ", text: "ありがとう！他にもいくつか候補を出して決めたいね", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 6, user: "タナカ", text: "ここなんてどうですか？ 『ホテルメンドー』", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 5, user: "サトウ", text: "そう！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 4, user: "イトウ", text: "日程は3月13日~3月19日ですよね？", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 3, user: "サトウ", text: "日程は決まっているから泊まるホテルを決めたいね、どこにしたい？", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 2, user: "タナカ", text: "そうしよ〜！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+  {id: 1, user: "サトウ", text: "スペイン旅行の計画の続きを考えよう！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
+]
+let id = 18
 
 export default (io, socket) => {
   const updateParticipants = () => {
