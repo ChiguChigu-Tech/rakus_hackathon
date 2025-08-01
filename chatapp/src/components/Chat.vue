@@ -1447,11 +1447,9 @@ socket.emit("getId");
   font-size: 1rem;
   color: #777;
   margin: 0 0 10px 0;
-  /* ★追加：少しだけ左に余白を持たせる */
   padding-left: 5px;
 }
 
-/* ★追加：チェックボックスとラベルのスタイル */
 .checkbox-label {
   display: flex;
   align-items: center;
