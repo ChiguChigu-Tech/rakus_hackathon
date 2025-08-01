@@ -13,7 +13,7 @@ let messages = [
   {id: 18, user: "イトウ", text: "飛行機取ったよ！往復で1人77000円です！", dateTime: new Date(), isLabeled: [true, false, false, true, false, false]},
   {id: 17, user: "イトウ", text: "僕やっとくね！>そういえば飛行機の予約誰か頼めるかな", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
   {id: 16, user: "サトウ", text: "そういえば飛行機の予約誰か頼めるかな", dateTime: new Date(), isLabeled: [true, false, false, true, false, false]},
-  {id: 15, user: "サトウ", text: "ホテルの予約取れた！1人88000円です！", dateTime: new Date(), isLabeled: [true, false, false, false, false, true]},
+  {id: 15, user: "サトウ", text: "ホテルの予約取れた！1人88000円です！", dateTime: new Date(), isLabeled: [true, false, false, false, true, true]},
   {id: 14, user: "イトウ", text: "賛成〜！>みんないいならここにしよう！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
   {id: 13, user: "タナカ", text: "賛成〜！>みんないいならここにしよう！", dateTime: new Date(), isLabeled: [false, false, false, false, false, false]},
   {id: 12, user: "サトウ", text: "みんないいならここにしよう！", dateTime: new Date(), isLabeled: [false, false, false, false, true, false]},
