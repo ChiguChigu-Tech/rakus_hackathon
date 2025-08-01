@@ -415,12 +415,14 @@ socket.emit("getId");
             <div class="message-bubble">
               <div class="message-header">
                 <span class="message-user">{{ message.user }}</span>
-                <button class="reply-button" @click="onReply(message)" title="リプライ">
-                  <span class="material-icons">reply</span>
-                </button>
-                <button class="delete-button" v-if="message.user == userName" @click="onDelete(message)">
-                  <span class="material-icons">delete</span>
-                </button>
+                <div class="message-buttons">
+                  <button class="reply-button" @click="onReply(message)" title="リプライ">
+                    <span class="material-icons">reply</span>
+                  </button>
+                  <button class="delete-button" v-if="message.user == userName" @click="onDelete(message)">
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
               </div>
               <div class="message-content">{{ message.text }}</div>
               <div v-for="(label, i) in (labels)" :key="i">
@@ -659,6 +661,12 @@ socket.emit("getId");
   margin-bottom: 4px;
   font-size: 0.8rem;
   opacity: 0.7;
+}
+
+.message-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .reply-button {
